@@ -110,7 +110,24 @@
             </div>
         </section>
         <!-- Indicadores -->
-
+        <!-- Gráficos -->
+<section class="p-4 text-right bg-light">
+    <h4 id="graficos" class="mb-3">
+        Gráficos
+    </h4>
+    <div class="container">
+        <div
+            class="row d-flex justify-content-center row-cols-1 row-cols-md-1 g-4 mt-2">
+            <div class="col">
+                <canvas id="plot1"></canvas>
+            </div>
+            <div class="col">
+                <canvas id="plot2"></canvas>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Gráficos -->
         <!-- MDB -->
         <script
             type="text/javascript"
@@ -120,5 +137,6 @@
         <script type="module" src="public/javascript/static_data.js"></script>
         <!-- Load data -->
         <script type="module" src="public/javascript/load_data.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     </body>
 </html>
