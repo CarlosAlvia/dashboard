@@ -16,7 +16,7 @@ setTimeout(() => {
 }, (60 - new Date().getSeconds()) * 1000);
 
 
-let crearConfig = (tipoGrafico, lbl1, lblDataset, data) => {
+let crearConfigPrecipitacion = (tipoGrafico, lbl1, lblDataset, data) => {
   let config = {
     type: tipoGrafico,
     data: {
@@ -59,7 +59,6 @@ let crearConfigMaxMin = (tipoGrafico, lbl1, lblMax,dataMax, lblMin, dataMin) => 
   return config;
 }
 
-// 17/11/2023, 21:00:53
 let cargarValoresActuales = (horas,temperatura,precipitaciones,sensacion,humedad) => {
   let indice = horas.indexOf(obtenerHoraFormateada());
   document.getElementById("precipitacionValue").innerHTML = precipitaciones[indice].toString()+"%";
@@ -85,10 +84,6 @@ let cargarOpenMeteo = () => {
     .then((responseText) => responseText.json())
     .then((responseJSON) => {
 
-      let plotRef = document.getElementById("plot1");
-      let plotRef2 = document.getElementById("plot2");
-
-    
       let horas = responseJSON.hourly.time;
       let temperatura = responseJSON.hourly.temperature_2m;
       let precipitaciones = responseJSON.hourly.precipitation_probability;
@@ -110,17 +105,25 @@ let cargarOpenMeteo = () => {
         tempsMax.push(tempxDiaAscendente[23]);
         precipitacionMax.push(precipitacionesxDiaAscendente[23]);
       }
-
       const temperaturasMaximas = tempsMax.map(temp => parseFloat(temp));
       const temperaturasMinimas = tempsMin.map(temp => parseFloat(temp));
-      let config = crearConfigMaxMin("line", dias, "Temperatura Máxima", temperaturasMaximas,"Temperatura Mínima",temperaturasMinimas);
-      let config2 = crearConfig("bar", dias, "Probabilidad de precipitación %", precipitacionMax);
 
-      let chart1 = new Chart(plotRef, config);
-      let chart2 = new Chart(plotRef2, config2);
+      cargarGraficos(dias,temperaturasMaximas,temperaturasMinimas,precipitacionMax);
+
     })
     .catch(console.error);
 };
+
+let cargarGraficos = (dias,temperaturasMaximas,temperaturasMinimas,precipitacionMax) =>{
+  let plotRef = document.getElementById("plot1");
+  let plotRef2 = document.getElementById("plot2");
+
+  let config = crearConfigMaxMin("line", dias, "Temperatura Máxima", temperaturasMaximas,"Temperatura Mínima",temperaturasMinimas);
+  let config2 = crearConfigPrecipitacion("bar", dias, "Probabilidad de precipitación %", precipitacionMax);
+
+  let chart1 = new Chart(plotRef, config);
+  let chart2 = new Chart(plotRef2, config2);
+}
 
 let parseXML = (responseText) => {
   // Parsing XML
@@ -220,8 +223,6 @@ let loadExternalTable = async () => {
   monitoreo.innerHTML = table.outerHTML
 };
 
-//cargarFechaActual();
-//cargarPrecipitacion();
 cargarOpenMeteo();
 loadForecastByCity();
 loadExternalTable();

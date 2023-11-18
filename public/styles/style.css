@@ -9,18 +9,6 @@ header {
     padding: 10px 20px;
 }
 
-.navbar {
-    border-bottom: 1px solid #dee2e6;
-    background-color: lightsteelblue;
-}
-
-.navbar-nav {
-    margin-left: auto;
-}
-
-.nav-item {
-    margin-right: 15px;
-}
 .card{
     background-color: lightsteelblue;
 }
