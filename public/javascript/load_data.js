@@ -1,4 +1,4 @@
-let obtenerHoraLocal = () => {
+let cargarHora = () => {
   var fechaHora = new Date();
   var horas = fechaHora.getHours();
   var minutos = fechaHora.getMinutes();
@@ -10,9 +10,9 @@ let obtenerHoraLocal = () => {
 
 setTimeout(() => {
   setInterval(() => {
-    obtenerHoraLocal();
+    cargarHora();
   }, 60000);
-  obtenerHoraLocal();
+  cargarHora();
 }, (60 - new Date().getSeconds()) * 1000);
 
 
@@ -85,43 +85,41 @@ let cargarOpenMeteo = () => {
     .then((responseJSON) => {
 
       let horas = responseJSON.hourly.time;
-      let temperatura = responseJSON.hourly.temperature_2m;
+      let temperaturas = responseJSON.hourly.temperature_2m;
       let precipitaciones = responseJSON.hourly.precipitation_probability;
       let sensacion = responseJSON.hourly.apparent_temperature;
       let humedad = responseJSON.hourly.relative_humidity_2m;
 
-      let dias = [];
-      let tempsMin = [];
-      let tempsMax = [];
-      let precipitacionMax = [];
-
-      cargarValoresActuales(horas,temperatura,precipitaciones,sensacion,humedad);
-
-      for (let i = 0; i <= 6; i++) {
-        dias.push(horas[0+(24*i)].split("T")[0]);
-        let tempxDiaAscendente = temperatura.slice(0+(24*i),24+(24*i)).sort();
-        let precipitacionesxDiaAscendente = precipitaciones.slice(0+(24*i),24+(24*i)).sort();
-        tempsMin.push(tempxDiaAscendente[0]);
-        tempsMax.push(tempxDiaAscendente[23]);
-        precipitacionMax.push(precipitacionesxDiaAscendente[23]);
-      }
-      const temperaturasMaximas = tempsMax.map(temp => parseFloat(temp));
-      const temperaturasMinimas = tempsMin.map(temp => parseFloat(temp));
-
-      cargarGraficos(dias,temperaturasMaximas,temperaturasMinimas,precipitacionMax);
-
+      cargarGraficos(horas,temperaturas,precipitaciones);
+      cargarValoresActuales(horas,temperaturas,precipitaciones,sensacion,humedad);
     })
     .catch(console.error);
 };
 
-let cargarGraficos = (dias,temperaturasMaximas,temperaturasMinimas,precipitacionMax) =>{
+let cargarGraficos = (horas,temperaturas,precipitaciones) =>{
+  let dias = [];
+  let tempsMin = [];
+  let tempsMax = [];
+  let precipitacionMax = [];
+
+  for (let i = 0; i <= 6; i++) {
+    dias.push(horas[0+(24*i)].split("T")[0]);
+    let tempxDia = temperaturas.slice(0+(24*i),24+(24*i));
+    let precipitacionesxDia = precipitaciones.slice(0+(24*i),24+(24*i));
+    tempsMin.push(Math.min(...tempxDia));
+    tempsMax.push(Math.max(...tempxDia));
+    precipitacionMax.push(Math.max(...precipitacionesxDia));
+  }
+  renderizarGraficos(dias,tempsMax,tempsMin,precipitacionMax);
+}
+
+let renderizarGraficos = (dias,temperaturasMaximas,temperaturasMinimas,precipitacionMax) =>{
   let plotRef = document.getElementById("plot1");
-  let plotRef2 = document.getElementById("plot2");
-
   let config = crearConfigMaxMin("line", dias, "Temperatura Máxima", temperaturasMaximas,"Temperatura Mínima",temperaturasMinimas);
-  let config2 = crearConfigPrecipitacion("bar", dias, "Probabilidad de precipitación %", precipitacionMax);
-
   let chart1 = new Chart(plotRef, config);
+
+  let plotRef2 = document.getElementById("plot2");
+  let config2 = crearConfigPrecipitacion("bar", dias, "Probabilidad de precipitación %", precipitacionMax);
   let chart2 = new Chart(plotRef2, config2);
 }
 
@@ -226,4 +224,4 @@ let loadExternalTable = async () => {
 cargarOpenMeteo();
 loadForecastByCity();
 loadExternalTable();
-obtenerHoraLocal();
+cargarHora();
