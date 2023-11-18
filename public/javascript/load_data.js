@@ -72,7 +72,6 @@ let obtenerHoraFormateada = () =>{
   let ddmmaa = fechaHora[0].split("/");
   let hora = fechaHora[1].trim().split(":");
   let horaABuscar= ddmmaa[2]+"-"+ddmmaa[1]+"-"+ddmmaa[0]+"T"+hora[0]+":00";
-  console.log(horaABuscar);
   return horaABuscar;
 }
 let cargarOpenMeteo = () => {
@@ -176,7 +175,7 @@ let selectListener = async (event) => {
   let ultima = localStorage.getItem("FechaGuardado");
   let tresHorasEnMilisegundos = 3 * 60 * 60 * 1000;
   let esAntigua = (new Date() - ultima)>=tresHorasEnMilisegundos;
-  
+
   if (cityStorage == null || esAntigua) {
     cargarInfoApi(selectedCity);
   } else {
