@@ -173,8 +173,11 @@ let selectListener = async (event) => {
   let selectedCity = event.target.value;
   // Lea la entrada de almacenamiento local
   let cityStorage = localStorage.getItem(selectedCity);
-
-  if (cityStorage == null) {
+  let ultima = localStorage.getItem("FechaGuardado");
+  let tresHorasEnMilisegundos = 3 * 60 * 60 * 1000;
+  let esAntigua = (new Date() - ultima)>=tresHorasEnMilisegundos;
+  
+  if (cityStorage == null || esAntigua) {
     cargarInfoApi(selectedCity);
   } else {
 
@@ -185,6 +188,7 @@ let selectListener = async (event) => {
 };
 
 let cargarInfoApi = async (selectedCity) => {
+
   try {
     //API key
     let APIkey = "44457df64ddd105950bfee6608efb1d2";
@@ -196,6 +200,7 @@ let cargarInfoApi = async (selectedCity) => {
     await renderizarPlantilla(parseXML(responseText));
     // Guarde la entrada de almacenamiento local
     await localStorage.setItem(selectedCity, responseText);
+    localStorage.setItem("FechaGuardado",new Date());
   } catch (error) {
 
   }
