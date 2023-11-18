@@ -30,3 +30,6 @@ header {
 .list-group-light{
     background-color: lightsteelblue;
 }
+.card-title{
+    color: black;
+}

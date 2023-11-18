@@ -60,10 +60,12 @@ let crearConfigMaxMin = (tipoGrafico, lbl1, lblMax,dataMax, lblMin, dataMin) => 
 }
 
 // 17/11/2023, 21:00:53
-let cargarValoresActuales = (horas,temperatura,precipitaciones) => {
+let cargarValoresActuales = (horas,temperatura,precipitaciones,sensacion,humedad) => {
   let indice = horas.indexOf(obtenerHoraFormateada());
   document.getElementById("precipitacionValue").innerHTML = precipitaciones[indice].toString()+"%";
   document.getElementById("temperaturaValue").innerHTML = Math.round(temperatura[indice]).toString()+"°C";
+  document.getElementById("sensacionValue").innerHTML = Math.round(sensacion[indice]).toString()+"°C";
+  document.getElementById("humedadValue").innerHTML = Math.round(humedad[indice]).toString()+"%";
 }
 
 let obtenerHoraFormateada = () =>{
@@ -90,13 +92,15 @@ let cargarOpenMeteo = () => {
       let horas = responseJSON.hourly.time;
       let temperatura = responseJSON.hourly.temperature_2m;
       let precipitaciones = responseJSON.hourly.precipitation_probability;
+      let sensacion = responseJSON.hourly.apparent_temperature;
+      let humedad = responseJSON.hourly.relative_humidity_2m;
 
       let dias = [];
       let tempsMin = [];
       let tempsMax = [];
       let precipitacionMax = [];
 
-      cargarValoresActuales(horas,temperatura,precipitaciones);
+      cargarValoresActuales(horas,temperatura,precipitaciones,sensacion,humedad);
 
       for (let i = 0; i <= 6; i++) {
         dias.push(horas[0+(24*i)].split("T")[0]);
